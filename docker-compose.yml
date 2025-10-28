@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:7-jammy
+    container_name: kvansum-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kvansum
+      MONGO_INITDB_ROOT_PASSWORD: kvansum_dev_password
+      MONGO_INITDB_DATABASE: kvansum
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', 'db.adminCommand("ping")']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kvansum-api
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      MONGODB_URI: mongodb://kvansum:kvansum_dev_password@mongodb:27017/kvansum?authSource=admin
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
