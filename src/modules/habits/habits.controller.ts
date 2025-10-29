@@ -6,59 +6,62 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  Req,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
+import { CreateHabitLogDto, GetHabitLogsQueryDto } from './dto/habit-log.dto';
+import { Request } from 'express';
 
-@Controller('habits')
+@Controller('api/habits')
 export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}
 
+  @Get()
+  findAll(@Req() req: Request) {
+    return this.habitsService.findAll(req.userId!);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createHabitDto: CreateHabitDto) {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.create(createHabitDto, userId);
-  }
-
-  @Get()
-  findAll() {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.findAll(userId);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.findOne(id, userId);
+  create(@Body() createHabitDto: CreateHabitDto, @Req() req: Request) {
+    return this.habitsService.create(createHabitDto, req.userId!);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHabitDto: UpdateHabitDto) {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.update(id, updateHabitDto, userId);
+  update(
+    @Param('id') id: string,
+    @Body() updateHabitDto: UpdateHabitDto,
+    @Req() req: Request,
+  ) {
+    return this.habitsService.update(id, updateHabitDto, req.userId!);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.remove(id, userId);
+  remove(@Param('id') id: string, @Req() req: Request) {
+    return this.habitsService.remove(id, req.userId!);
   }
 
-  @Post(':id/complete')
-  markComplete(@Param('id') id: string) {
-    // TODO: Получить userId из JWT токена
-    const userId = '000000000000000000000001'; // Mock userId
-    return this.habitsService.markComplete(id, userId, new Date());
+  @Post(':id/log')
+  createLog(
+    @Param('id') id: string,
+    @Body() createLogDto: CreateHabitLogDto,
+    @Req() req: Request,
+  ) {
+    return this.habitsService.createLog(id, createLogDto, req.userId!);
+  }
+
+  @Get(':id/logs')
+  getLogs(
+    @Param('id') id: string,
+    @Query() query: GetHabitLogsQueryDto,
+    @Req() req: Request,
+  ) {
+    return this.habitsService.getLogs(id, req.userId!, query);
   }
 }
 

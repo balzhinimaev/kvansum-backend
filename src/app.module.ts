@@ -1,9 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './modules/health/health.module';
 import { HabitsModule } from './modules/habits/habits.module';
+import { UsersModule } from './modules/users/users.module';
+import { StatsModule } from './modules/stats/stats.module';
+import { ThoughtsModule } from './modules/thoughts/thoughts.module';
+import { ArtefactsModule } from './modules/artefacts/artefacts.module';
 import { WebSocketsModule } from './common/websockets/websockets.module';
+import { UserMiddleware } from './common/middleware/user.middleware';
 import configuration from './config/configuration';
 
 @Module({
@@ -30,7 +35,18 @@ import configuration from './config/configuration';
 
     // Модули приложения
     HealthModule,
+    UsersModule,
     HabitsModule,
+    StatsModule,
+    ThoughtsModule,
+    ArtefactsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserMiddleware)
+      .exclude('health')
+      .forRoutes('*');
+  }
+}

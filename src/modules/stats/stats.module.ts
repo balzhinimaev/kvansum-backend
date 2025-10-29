@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { StatsController } from './stats.controller';
+import { StatsService } from './stats.service';
 import { Habit, HabitSchema } from '../../common/schemas/habit.schema';
 import { HabitLog, HabitLogSchema } from '../../common/schemas/habit-log.schema';
 import { UserStats, UserStatsSchema } from '../../common/schemas/user-stats.schema';
-import { HabitsController } from './habits.controller';
-import { HabitsService } from './habits.service';
-import { WebSocketsModule } from '../../common/websockets/websockets.module';
 
 @Module({
   imports: [
@@ -14,11 +13,10 @@ import { WebSocketsModule } from '../../common/websockets/websockets.module';
       { name: HabitLog.name, schema: HabitLogSchema },
       { name: UserStats.name, schema: UserStatsSchema },
     ]),
-    WebSocketsModule,
   ],
-  controllers: [HabitsController],
-  providers: [HabitsService],
-  exports: [HabitsService],
+  controllers: [StatsController],
+  providers: [StatsService],
+  exports: [StatsService],
 })
-export class HabitsModule {}
+export class StatsModule {}
 
