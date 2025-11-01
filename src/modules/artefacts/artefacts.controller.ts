@@ -14,10 +14,10 @@ export class ArtefactsController {
   create(
     @Body()
     body: {
+      id: string;
       title: string;
-      emoji?: string;
-      description?: string;
-      tag?: string;
+      body: string;
+      unlock: any;
     },
   ) {
     // В продакшене здесь должна быть проверка на admin роль

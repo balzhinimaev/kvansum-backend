@@ -5,21 +5,20 @@ export type ThoughtDocument = Thought & Document;
 
 @Schema({ timestamps: true })
 export class Thought {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   quote: string;
 
-  @Prop()
+  @Prop({ type: String })
   author?: string;
 
-  @Prop({ default: true, index: true })
+  @Prop({ type: Boolean, default: true, index: true })
   isActive: boolean;
 
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   order: number;
 }
 
 export const ThoughtSchema = SchemaFactory.createForClass(Thought);
 
-// Индексы
-ThoughtSchema.index({ isActive: 1 });
+// Индекс уже определен в @Prop decorator с index: true
 

@@ -16,24 +16,22 @@ export class ArtefactsService {
 
     return {
       artefacts: artefacts.map((a) => ({
-        id: a._id,
+        id: a.id,
         title: a.title,
-        emoji: a.emoji,
-        tag: a.tag,
-        description: a.description,
+        body: a.body,
+        unlock: a.unlock,
       })),
     };
   }
 
-  async create(data: { title: string; emoji?: string; description?: string; tag?: string }) {
+  async create(data: { id: string; title: string; body: string; unlock: any }) {
     const artefact = await this.artefactModel.create(data);
 
     return {
-      id: artefact._id,
+      id: artefact.id,
       title: artefact.title,
-      emoji: artefact.emoji,
-      tag: artefact.tag,
-      description: artefact.description,
+      body: artefact.body,
+      unlock: artefact.unlock,
       isActive: artefact.isActive,
       createdAt: artefact.createdAt,
     };

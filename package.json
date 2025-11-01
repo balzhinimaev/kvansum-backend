@@ -11,6 +11,7 @@
     "start:dev": "tsx watch src/main.ts",
     "start:prod": "node dist/main.js",
     "seed": "tsx scripts/seed.ts",
+    "seed:new": "tsx scripts/seed-new.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\""
   },

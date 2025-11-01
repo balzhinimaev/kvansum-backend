@@ -4,4 +4,6 @@ export * from './habit-log.schema';
 export * from './user-stats.schema';
 export * from './thought.schema';
 export * from './artefact.schema';
+export * from './level.schema';
+export * from './user-progress.schema';
 

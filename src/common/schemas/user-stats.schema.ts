@@ -9,38 +9,38 @@ export class UserStats {
   userId: Types.ObjectId;
 
   // Общая статистика
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   totalPoints: number;
 
-  @Prop({ default: 1 })
+  @Prop({ type: Number, default: 1 })
   currentLevel: number;
 
   @Prop({
+    type: String,
     default: 'beginner',
     enum: ['beginner', 'observer', 'active', 'systemic', 'architect', 'scaling'],
   })
   currentRank: string;
 
   // Серии
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   longestStreak: number;
 
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   currentStreak: number;
 
   // История
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   totalHabits: number;
 
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   completedToday: number;
 
-  @Prop({ default: () => new Date() })
+  @Prop({ type: Date, default: () => new Date() })
   lastActivityAt: Date;
 }
 
 export const UserStatsSchema = SchemaFactory.createForClass(UserStats);
 
-// Индексы
-UserStatsSchema.index({ userId: 1 });
+// Индекс уже определен в @Prop decorator
 

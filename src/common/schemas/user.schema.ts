@@ -5,25 +5,23 @@ export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ unique: true, sparse: true })
+  @Prop({ type: Number, unique: true, sparse: true })
   telegramId?: number;
 
-  @Prop()
+  @Prop({ type: String })
   username?: string;
 
-  @Prop()
+  @Prop({ type: String })
   firstName?: string;
 
-  @Prop()
+  @Prop({ type: String })
   lastName?: string;
 
-  @Prop({ unique: true, sparse: true })
+  @Prop({ type: String, unique: true, sparse: true })
   email?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// Индексы
-UserSchema.index({ telegramId: 1 });
-UserSchema.index({ email: 1 });
+// Индексы уже определены в @Prop decorators с index: true
 

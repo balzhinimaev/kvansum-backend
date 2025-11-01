@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './modules/health/health.module';
 import { HabitsModule } from './modules/habits/habits.module';
+import { LevelsModule } from './modules/levels/levels.module';
 import { UsersModule } from './modules/users/users.module';
 import { StatsModule } from './modules/stats/stats.module';
 import { ThoughtsModule } from './modules/thoughts/thoughts.module';
@@ -38,6 +39,7 @@ import configuration from './config/configuration';
     HealthModule,
     UsersModule,
     HabitsModule,
+    LevelsModule,
     StatsModule,
     ThoughtsModule,
     ArtefactsModule,
