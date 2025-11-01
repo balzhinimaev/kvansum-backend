@@ -24,6 +24,7 @@ import configuration from './config/configuration';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('database.uri'),
+        dbName: configService.get<string>('database.dbName'),
         retryWrites: true,
         w: 'majority',
       }),

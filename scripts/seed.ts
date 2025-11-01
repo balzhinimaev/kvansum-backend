@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 config();
 
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/kvansum';
+const DB_NAME = process.env.DB_NAME || 'kvansum';
 
 // Схемы
 const UserSchema = new mongoose.Schema({
@@ -71,7 +72,9 @@ const ArtefactSchema = new mongoose.Schema({
 async function seed() {
   try {
     console.log('🌱 Connecting to MongoDB...');
-    await mongoose.connect(MONGO_URI);
+    await mongoose.connect(MONGO_URI, {
+      dbName: DB_NAME,
+    });
     console.log('✅ Connected to MongoDB');
 
     // Очищаем существующие данные
@@ -164,7 +167,15 @@ async function seed() {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    const logs = [];
+    interface HabitLogInput {
+      userId: mongoose.Types.ObjectId | string;
+      habitId: mongoose.Types.ObjectId | string;
+      date: Date;
+      status: string;
+      points: number;
+    }
+
+    const logs: HabitLogInput[] = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
