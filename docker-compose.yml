@@ -35,7 +35,7 @@ services:
     volumes:
       - ./src:/app/src
     networks:
-      - shared-network
+      - mongo-network
 
 # Volumes закомментированы - используется внешний MongoDB
 # volumes:
@@ -43,7 +43,7 @@ services:
 #   mongodb_config:
 
 networks:
-  shared-network:
+  mongo-network:
     external: true
-    name: shared-network
+    name: mongo-network
 
