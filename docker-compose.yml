@@ -45,5 +45,5 @@ services:
 networks:
   mongo-network:
     external: true
-    name: mongo-network
+    name: mongo_mongo-network
 
