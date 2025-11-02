@@ -34,9 +34,16 @@ services:
     # depends_on убран - используется внешний MongoDB
     volumes:
       - ./src:/app/src
+    networks:
+      - shared-network
 
 # Volumes закомментированы - используется внешний MongoDB
 # volumes:
 #   mongodb_data:
 #   mongodb_config:
+
+networks:
+  shared-network:
+    external: true
+    name: shared-network
 
