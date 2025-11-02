@@ -145,7 +145,7 @@ export class StatsService {
 
           return {
             habitId: habit._id,
-            name: habit.name,
+            name: habit.title,
             emoji: habit.emoji,
             status: log ? log.status : 'pending',
             points: log ? log.points : 0,

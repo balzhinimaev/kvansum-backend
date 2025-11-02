@@ -43,7 +43,7 @@ export class HabitsService {
         totalDone: h.totalDone,
         order: h.order,
         isActive: h.isActive,
-        createdAt: h.createdAt,
+        createdAt: (h as any).createdAt,
         // Старые поля для обратной совместимости
         time: h.time,
         period: h.period,
@@ -82,7 +82,7 @@ export class HabitsService {
       totalDone: habit.totalDone,
       order: habit.order,
       isActive: habit.isActive,
-      createdAt: habit.createdAt,
+      createdAt: (habit as any).createdAt,
     };
   }
 
@@ -124,7 +124,7 @@ export class HabitsService {
       totalDone: habit.totalDone,
       order: habit.order,
       isActive: habit.isActive,
-      createdAt: habit.createdAt,
+      createdAt: (habit as any).createdAt,
     };
   }
 
@@ -227,7 +227,7 @@ export class HabitsService {
         status: log.status,
         note: log.note,
         points: log.points,
-        createdAt: log.createdAt,
+        createdAt: (log as any).createdAt,
       },
       habit: {
         streak: habit.streak,
@@ -276,7 +276,7 @@ export class HabitsService {
         status: l.status,
         note: l.note,
         points: l.points,
-        createdAt: l.createdAt,
+        createdAt: (l as any).createdAt,
       })),
     };
   }

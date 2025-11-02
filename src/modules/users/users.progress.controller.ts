@@ -1,9 +1,11 @@
 import { Controller, Get, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UserProgress, UserProgressDocument } from '../../common/schemas/user-progress.schema';
 
+@ApiTags('progress')
 @Controller('api/progress')
 export class ProgressController {
   constructor(
@@ -12,6 +14,11 @@ export class ProgressController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Получить прогресс пользователя' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Прогресс пользователя: выполнение по датам, серии привычек, разблокированные уровни' 
+  })
   async getProgress(@Req() req: Request) {
     const userId = req.userId!;
 

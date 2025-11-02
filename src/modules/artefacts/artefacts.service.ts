@@ -33,7 +33,7 @@ export class ArtefactsService {
       body: artefact.body,
       unlock: artefact.unlock,
       isActive: artefact.isActive,
-      createdAt: artefact.createdAt,
+      createdAt: (artefact as any).createdAt,
     };
   }
 }

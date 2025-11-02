@@ -2,6 +2,7 @@ import 'reflect-metadata'; // первой строкой обязательно
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -33,10 +34,36 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
+  // Swagger документация
+  const config = new DocumentBuilder()
+    .setTitle('Kvansum API')
+    .setDescription('Backend API для приложения отслеживания привычек Kvansum с системой уровней и прогрессии')
+    .setVersion('2.0.0')
+    .addTag('habits', 'Управление привычками')
+    .addTag('levels', 'Система уровней прогрессии')
+    .addTag('progress', 'Прогресс пользователя')
+    .addTag('stats', 'Статистика и аналитика')
+    .addTag('users', 'Пользователи')
+    .addTag('thoughts', 'Мысли дня')
+    .addTag('artefacts', 'Артефакты развития')
+    .addTag('health', 'Health check')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
+
   // Запускаем приложение
   await app.listen(port);
 
   logger.log(`✅ API running on http://localhost:${port}`);
+  logger.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
   logger.log(`🌍 Environment: ${nodeEnv}`);
   logger.log(`🔌 WebSocket server is ready`);
   logger.log(`📊 MongoDB connection established`);

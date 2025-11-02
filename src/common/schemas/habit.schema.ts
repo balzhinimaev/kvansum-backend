@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 export type HabitDocument = Habit & Document;
 
-interface HabitStage {
+export interface HabitStage {
   days: number;
   title: string;
   description: string;

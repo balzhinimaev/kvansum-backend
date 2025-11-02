@@ -55,7 +55,7 @@ export class UsersService {
         username: user.username,
         firstName: user.firstName,
         email: user.email,
-        createdAt: user.createdAt,
+        createdAt: (user as any).createdAt,
       },
       stats: {
         totalPoints: stats.totalPoints,
@@ -84,7 +84,7 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      createdAt: user.createdAt,
+      createdAt: (user as any).createdAt,
     };
   }
 
@@ -105,18 +105,18 @@ export class UsersService {
         lastName: user.lastName,
         email: user.email,
         telegramId: user.telegramId,
-        createdAt: user.createdAt,
+        createdAt: (user as any).createdAt,
       },
       stats: stats || {},
       habits: habits.map((h) => ({
         id: h._id,
-        name: h.name,
+        name: h.title,
         emoji: h.emoji,
         note: h.note,
         streak: h.streak,
         bestStreak: h.bestStreak,
         totalDone: h.totalDone,
-        createdAt: h.createdAt,
+        createdAt: (h as any).createdAt,
       })),
       exportedAt: new Date().toISOString(),
     };

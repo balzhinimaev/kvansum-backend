@@ -51,7 +51,7 @@ export class ThoughtsService {
         author: t.author,
         isActive: t.isActive,
         order: t.order,
-        createdAt: t.createdAt,
+        createdAt: (t as any).createdAt,
       })),
     };
   }
@@ -65,7 +65,7 @@ export class ThoughtsService {
       author: thought.author,
       isActive: thought.isActive,
       order: thought.order,
-      createdAt: thought.createdAt,
+      createdAt: (thought as any).createdAt,
     };
   }
 }
