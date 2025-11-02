@@ -19,8 +19,8 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 # JWT_SECRET=your-secret-key-here
 # JWT_EXPIRES_IN=7d
 
-# Telegram Bot (для будущей реализации)
-# TELEGRAM_BOT_TOKEN=your-bot-token-here
+# Telegram Bot (ОБЯЗАТЕЛЬНО для авторизации)
+TELEGRAM_BOT_TOKEN=your-bot-token-here
 # TELEGRAM_WEBHOOK_URL=https://your-domain.com/telegram/webhook
 ```
 
@@ -43,9 +43,10 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 - `JWT_SECRET` - Секретный ключ для подписи JWT токенов
 - `JWT_EXPIRES_IN` - Время жизни токена (например, 7d, 24h, 60m)
 
-### Telegram (опционально)
-- `TELEGRAM_BOT_TOKEN` - Токен Telegram бота
-- `TELEGRAM_WEBHOOK_URL` - URL для webhook Telegram бота
+### Telegram (ОБЯЗАТЕЛЬНО)
+- `TELEGRAM_BOT_TOKEN` - Токен Telegram бота (обязательно для авторизации через Telegram Web App)
+  - Получить можно у [@BotFather](https://t.me/botfather) командой `/newbot`
+- `TELEGRAM_WEBHOOK_URL` - URL для webhook Telegram бота (опционально)
 
 ## Разные окружения
 
