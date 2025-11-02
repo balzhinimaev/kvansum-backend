@@ -29,8 +29,11 @@ pnpm install
 NODE_ENV=development
 PORT=3001
 MONGODB_URI=mongodb://kvansum:kvansum_dev_password@localhost:27017/kvansum?authSource=admin
+TELEGRAM_BOT_TOKEN=your_bot_token_here
 CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 ```
+
+> 📖 **Подробные инструкции:** См. [QUICKSTART.md](QUICKSTART.md) и [AUTH_SETUP.md](AUTH_SETUP.md)
 
 ## 🗄️ База данных
 
@@ -327,14 +330,23 @@ WebSocket события при:
 - Выполнении привычки
 - Удалении привычки
 
+## 📚 Документация
+
+- 📘 [API Documentation](API_DOCUMENTATION_NEW.md) - Полная документация API
+- 🚀 [Quick Start](QUICKSTART.md) - Быстрый старт с инструкциями
+- 🔐 [Auth Setup](AUTH_SETUP.md) - Настройка Telegram аутентификации
+- 🧪 [Testing Guide](TESTING.md) - Руководство по тестированию
+- 🚢 [Deployment](DEPLOY.md) - Инструкции по деплою
+- 📋 [MVP Checklist](MVP_CHECKLIST.md) - Чеклист готовности
+- 📖 [Summary](SUMMARY.md) - Краткая сводка проекта
+- 📱 [Telegram Test App](INSTALL_TELEGRAM_TEST_APP.md) - Как открыть HTML в TMA
+
 ## 📝 TODO
 
-- [ ] Реализовать JWT аутентификацию
-- [ ] Добавить Telegram бот интеграцию
+- [ ] Telegram бот интеграция для напоминаний
 - [ ] Реализовать биллинг систему
 - [ ] Добавить unit и e2e тесты
 - [ ] Настроить CI/CD pipeline
-- [ ] Добавить Swagger документацию
 - [ ] Добавить кеширование (Redis)
 - [ ] Настроить rate limiting
 
