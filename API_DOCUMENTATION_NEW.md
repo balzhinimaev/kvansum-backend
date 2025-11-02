@@ -72,10 +72,78 @@ API будет доступен на `http://localhost:3001`
 
 ## API Endpoints
 
-### Аутентификация
+### 🔐 Аутентификация через Telegram
 
-Все запросы (кроме `/health`) проходят через middleware, который добавляет `userId` в request.
-В режиме разработки используется mock-аутентификация с `userId = "test-user-1"`.
+Приложение использует Telegram Web App для аутентификации пользователей через `initData`.
+
+**Настройка:**
+1. Получите bot token от [@BotFather](https://t.me/botfather)
+2. Установите `TELEGRAM_BOT_TOKEN` в `.env`
+3. Подробная документация: `AUTH_SETUP.md`
+
+#### POST /api/auth/telegram
+
+Авторизация через Telegram Web App (создает пользователя при первом входе).
+
+**Request:**
+```json
+{
+  "initData": "query_id=...&user=%7B%22id%22%3A123456789...&hash=..."
+}
+```
+
+**Response:**
+```json
+{
+  "userId": "507f1f77bcf86cd799439011",
+  "telegramId": 123456789,
+  "firstName": "John",
+  "lastName": "Doe",
+  "username": "johndoe",
+  "photoUrl": "https://..."
+}
+```
+
+#### Защищенные запросы
+
+Все запросы (кроме `/health` и `/api/auth/telegram`) требуют заголовок:
+
+```http
+X-Telegram-Init-Data: query_id=...&user=...&hash=...
+```
+
+**Режим разработки:**
+В режиме `NODE_ENV=development` можно использовать mock-аутентификацию:
+
+```http
+X-User-Id: test-user-1
+```
+
+**Валидация:**
+- HMAC-SHA256 проверка подписи
+- Срок действия initData: 24 часа
+- Автоматическое создание/обновление пользователя
+
+**Пример с axios:**
+```typescript
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://localhost:3001',
+});
+
+// Автоматическое добавление initData в заголовки
+api.interceptors.request.use((config) => {
+  const initData = window.Telegram?.WebApp?.initData;
+  if (initData) {
+    config.headers['X-Telegram-Init-Data'] = initData;
+  }
+  return config;
+});
+
+// Использование
+const habits = await api.get('/api/habits');
+```
 
 ---
 

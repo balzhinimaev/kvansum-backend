@@ -31,7 +31,13 @@ async function bootstrap() {
     origin: configService.get<string[]>('cors.origins'),
     credentials: configService.get<boolean>('cors.credentials'),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'X-Telegram-Init-Data', // Для Telegram Web App аутентификации
+      'X-User-Id',            // Для development режима
+    ],
   });
 
   // Swagger документация

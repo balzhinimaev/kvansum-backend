@@ -24,6 +24,33 @@ export class UsersService {
     return user;
   }
 
+  async findOrCreateByTelegramId(telegramId: number, userData?: Partial<User>): Promise<UserDocument> {
+    let user = await this.userModel.findOne({ telegramId });
+    
+    if (!user) {
+      // Создаем нового пользователя
+      user = await this.userModel.create({
+        telegramId,
+        username: userData?.username,
+        firstName: userData?.firstName,
+        lastName: userData?.lastName,
+        email: userData?.email,
+      });
+      
+      // Создаем статистику для нового пользователя
+      await this.userStatsModel.create({ userId: user._id });
+    } else if (userData) {
+      // Обновляем данные существующего пользователя
+      user.username = userData.username || user.username;
+      user.firstName = userData.firstName || user.firstName;
+      user.lastName = userData.lastName || user.lastName;
+      user.email = userData.email || user.email;
+      await user.save();
+    }
+    
+    return user;
+  }
+
   async findById(userId: string): Promise<UserDocument> {
     const user = await this.userModel.findById(userId);
     if (!user) {

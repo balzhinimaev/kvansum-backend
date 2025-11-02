@@ -9,5 +9,8 @@ export default () => ({
     origins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   },
+  telegram: {
+    botToken: process.env.TELEGRAM_BOT_TOKEN || '',
+  },
 });
 

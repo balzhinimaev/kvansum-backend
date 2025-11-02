@@ -23,6 +23,16 @@ pnpm install
 
 ## 2. Настройка окружения
 
+### Получение Telegram Bot Token (обязательно для production)
+
+1. Откройте [@BotFather](https://t.me/botfather) в Telegram
+2. Отправьте команду `/newbot`
+3. Выберите имя для бота (например, "My Habits Bot")
+4. Выберите username (должен заканчиваться на `bot`, например `my_habits_bot`)
+5. Скопируйте токен (выглядит как `123456789:ABCdefGHIjklMNOpqrsTUVwxyz`)
+
+### Создание .env файла
+
 Создайте файл `.env` в корне проекта:
 
 ```bash
@@ -31,12 +41,24 @@ cat > .env << 'EOF'
 NODE_ENV=development
 PORT=3001
 MONGODB_URI=mongodb://kvansum:kvansum_dev_password@localhost:27017/kvansum?authSource=admin
+TELEGRAM_BOT_TOKEN=your_bot_token_here
 CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 EOF
 
 # Windows (PowerShell)
-# Создайте файл .env вручную с содержимым из ENV_SETUP.md
+# Создайте файл .env вручную с содержимым ниже
 ```
+
+**Минимальный .env для разработки:**
+```env
+NODE_ENV=development
+PORT=3001
+MONGODB_URI=mongodb://localhost:27017/kvansum
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+```
+
+> **Примечание:** В режиме `development` можно использовать mock аутентификацию через заголовок `X-User-Id`, поэтому bot token не обязателен для локальной разработки.
 
 ## 3. Запуск MongoDB
 
