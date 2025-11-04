@@ -23,6 +23,5 @@ export class UserProgress {
 
 export const UserProgressSchema = SchemaFactory.createForClass(UserProgress);
 
-// Индексы
-UserProgressSchema.index({ userId: 1 }, { unique: true });
+// Индекс userId уже создан через unique: true в @Prop
 

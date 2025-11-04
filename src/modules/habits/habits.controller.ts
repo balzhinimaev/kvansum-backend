@@ -11,7 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
@@ -80,6 +80,9 @@ export class HabitsController {
   @Get(':id/logs')
   @ApiOperation({ summary: 'Получить историю выполнения привычки' })
   @ApiParam({ name: 'id', description: 'ID привычки' })
+  @ApiQuery({ name: 'from', required: false, description: 'Начальная дата (YYYY-MM-DD)', type: String })
+  @ApiQuery({ name: 'to', required: false, description: 'Конечная дата (YYYY-MM-DD)', type: String })
+  @ApiQuery({ name: 'limit', required: false, description: 'Лимит записей', type: Number })
   @ApiResponse({ status: 200, description: 'История успешно получена' })
   @ApiResponse({ status: 404, description: 'Привычка не найдена' })
   getLogs(
