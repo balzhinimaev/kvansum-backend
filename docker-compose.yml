@@ -32,6 +32,7 @@ services:
       PORT: ${PORT:-3001}
       MONGODB_URI: ${MONGODB_URI}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      CORS_ORIGINS: ${CORS_ORIGINS}
     # depends_on убран - используется внешний MongoDB
     volumes:
       - ./src:/app/src
