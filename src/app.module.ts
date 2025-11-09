@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, forwardRef } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, forwardRef, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './modules/health/health.module';
@@ -13,6 +13,8 @@ import { WebSocketsModule } from './common/websockets/websockets.module';
 import { UserMiddleware } from './common/middleware/user.middleware';
 import configuration from './config/configuration';
 
+const logger = new Logger('AppModule');
+
 @Module({
   imports: [
     // Конфигурация
@@ -24,12 +26,21 @@ import configuration from './config/configuration';
     // MongoDB подключение
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('database.uri'),
-        dbName: configService.get<string>('database.dbName'),
-        retryWrites: true,
-        w: 'majority',
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('database.uri');
+        const dbName = configService.get<string>('database.dbName');
+        
+        logger.log(`🗄️  Connecting to MongoDB...`);
+        logger.log(`   URI: ${uri?.substring(0, 20)}...`);
+        logger.log(`   DB Name: ${dbName}`);
+        
+        return {
+          uri,
+          dbName,
+          retryWrites: true,
+          w: 'majority',
+        };
+      },
       inject: [ConfigService],
     }),
 

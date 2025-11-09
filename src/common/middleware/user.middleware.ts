@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NestMiddleware, UnauthorizedException, Inject, forwardRef, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { createHmac } from 'crypto';
@@ -15,6 +15,8 @@ declare global {
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(UserMiddleware.name);
+
   constructor(
     private configService: ConfigService,
     @Inject(forwardRef(() => UsersService))
@@ -22,6 +24,9 @@ export class UserMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    const path = req.path;
+    this.logger.log(`🔒 [UserMiddleware] ${req.method} ${path}`);
+
     // Для разработки можно использовать mock пользователя
     const nodeEnv = this.configService.get<string>('nodeEnv');
     
@@ -29,6 +34,7 @@ export class UserMiddleware implements NestMiddleware {
     if (nodeEnv === 'development') {
       const mockUserId = req.headers['x-user-id'] as string;
       if (mockUserId) {
+        this.logger.log(`[UserMiddleware] Development mode - using mock userId: ${mockUserId}`);
         req.userId = mockUserId;
         next();
         return;
@@ -39,15 +45,20 @@ export class UserMiddleware implements NestMiddleware {
     const initData = req.headers['x-telegram-init-data'] as string;
     
     if (!initData) {
+      this.logger.warn(`[UserMiddleware] ❌ Missing X-Telegram-Init-Data header for ${path}`);
       throw new UnauthorizedException('Missing Telegram authentication data');
     }
 
     try {
+      this.logger.log(`[UserMiddleware] Validating initData...`);
+      
       // Валидируем initData
       const validatedData = this.validateInitData(initData);
       
       // Извлекаем telegramId из валидированных данных
       req.telegramId = validatedData.user.id;
+      
+      this.logger.log(`[UserMiddleware] Validated telegramId: ${req.telegramId}`);
       
       // Находим или создаем пользователя в БД
       const user = await this.usersService.findOrCreateByTelegramId(
@@ -62,8 +73,11 @@ export class UserMiddleware implements NestMiddleware {
       // Устанавливаем userId для использования в контроллерах
       req.userId = user._id.toString();
       
+      this.logger.log(`[UserMiddleware] ✅ User authorized: userId=${req.userId}, telegramId=${req.telegramId}`);
+      
       next();
     } catch (error) {
+      this.logger.error(`[UserMiddleware] ❌ Authentication failed: ${error.message}`);
       throw new UnauthorizedException('Invalid Telegram authentication data');
     }
   }

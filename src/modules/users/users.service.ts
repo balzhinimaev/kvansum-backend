@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from '../../common/schemas/user.schema';
@@ -8,6 +8,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(UserStats.name) private userStatsModel: Model<UserStatsDocument>,
@@ -25,9 +27,13 @@ export class UsersService {
   }
 
   async findOrCreateByTelegramId(telegramId: number, userData?: Partial<User>): Promise<UserDocument> {
+    this.logger.log(`[findOrCreateByTelegramId] Looking for telegramId: ${telegramId}`);
     let user = await this.userModel.findOne({ telegramId });
     
     if (!user) {
+      this.logger.log(`[findOrCreateByTelegramId] User NOT found - creating new user...`);
+      this.logger.debug(`[findOrCreateByTelegramId] User data: ${JSON.stringify(userData)}`);
+      
       // Создаем нового пользователя
       user = await this.userModel.create({
         telegramId,
@@ -37,15 +43,24 @@ export class UsersService {
         email: userData?.email,
       });
       
+      this.logger.log(`[findOrCreateByTelegramId] ✅ User created: ${user._id}, telegramId: ${user.telegramId}`);
+      
       // Создаем статистику для нового пользователя
-      await this.userStatsModel.create({ userId: user._id });
+      const stats = await this.userStatsModel.create({ userId: user._id });
+      this.logger.log(`[findOrCreateByTelegramId] ✅ User stats created: ${stats._id}`);
     } else if (userData) {
+      this.logger.log(`[findOrCreateByTelegramId] User FOUND: ${user._id} - updating...`);
+      
       // Обновляем данные существующего пользователя
       user.username = userData.username || user.username;
       user.firstName = userData.firstName || user.firstName;
       user.lastName = userData.lastName || user.lastName;
       user.email = userData.email || user.email;
       await user.save();
+      
+      this.logger.log(`[findOrCreateByTelegramId] ✅ User updated: ${user._id}`);
+    } else {
+      this.logger.log(`[findOrCreateByTelegramId] User FOUND: ${user._id} - no update needed`);
     }
     
     return user;
