@@ -10,15 +10,19 @@ import {
   Req,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { CreateHabitLogDto, GetHabitLogsQueryDto } from './dto/habit-log.dto';
 import { Request } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('habits')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('api/habits')
 export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}
@@ -27,7 +31,7 @@ export class HabitsController {
   @ApiOperation({ summary: 'Получить все активные привычки пользователя' })
   @ApiResponse({ status: 200, description: 'Список привычек успешно получен' })
   findAll(@Req() req: Request) {
-    return this.habitsService.findAll(req.userId!);
+    return this.habitsService.findAll(req.user!.userId);
   }
 
   @Post()
@@ -37,7 +41,7 @@ export class HabitsController {
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
   @ApiBody({ type: CreateHabitDto })
   create(@Body() createHabitDto: CreateHabitDto, @Req() req: Request) {
-    return this.habitsService.create(createHabitDto, req.userId!);
+    return this.habitsService.create(createHabitDto, req.user!.userId);
   }
 
   @Patch(':id')
@@ -51,7 +55,7 @@ export class HabitsController {
     @Body() updateHabitDto: UpdateHabitDto,
     @Req() req: Request,
   ) {
-    return this.habitsService.update(id, updateHabitDto, req.userId!);
+    return this.habitsService.update(id, updateHabitDto, req.user!.userId);
   }
 
   @Delete(':id')
@@ -60,7 +64,7 @@ export class HabitsController {
   @ApiResponse({ status: 200, description: 'Привычка успешно удалена' })
   @ApiResponse({ status: 404, description: 'Привычка не найдена' })
   remove(@Param('id') id: string, @Req() req: Request) {
-    return this.habitsService.remove(id, req.userId!);
+    return this.habitsService.remove(id, req.user!.userId);
   }
 
   @Post(':id/log')
@@ -74,7 +78,7 @@ export class HabitsController {
     @Body() createLogDto: CreateHabitLogDto,
     @Req() req: Request,
   ) {
-    return this.habitsService.createLog(id, createLogDto, req.userId!);
+    return this.habitsService.createLog(id, createLogDto, req.user!.userId);
   }
 
   @Get(':id/logs')
@@ -90,7 +94,7 @@ export class HabitsController {
     @Query() query: GetHabitLogsQueryDto,
     @Req() req: Request,
   ) {
-    return this.habitsService.getLogs(id, req.userId!, query);
+    return this.habitsService.getLogs(id, req.user!.userId, query);
   }
 }
 

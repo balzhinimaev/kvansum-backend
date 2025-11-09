@@ -12,5 +12,9 @@ export default () => ({
   telegram: {
     botToken: process.env.TELEGRAM_BOT_TOKEN || '',
   },
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-secret-key-for-development', // В продакшене используйте переменную окружения
+    expiresIn: process.env.JWT_EXPIRATION_TIME || '3600s', // 1 час
+  },
 });
 

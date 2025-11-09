@@ -1,9 +1,12 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { StatsService } from './stats.service';
 import { Request } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('stats')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('api/stats')
 export class StatsController {
   constructor(private readonly statsService: StatsService) {}
@@ -15,7 +18,7 @@ export class StatsController {
     description: 'Статистика за сегодня и последние 7 дней, включая общие данные пользователя' 
   })
   getDashboard(@Req() req: Request) {
-    return this.statsService.getDashboard(req.userId!);
+    return this.statsService.getDashboard(req.user!.userId);
   }
 
   @Get('weekly')
@@ -23,7 +26,7 @@ export class StatsController {
   @ApiQuery({ name: 'week', required: false, description: 'Номер недели (опционально)', type: String })
   @ApiResponse({ status: 200, description: 'Детальная статистика за неделю' })
   getWeekly(@Req() req: Request, @Query() query: { week?: string }) {
-    return this.statsService.getWeekly(req.userId!, query.week);
+    return this.statsService.getWeekly(req.user!.userId, query.week);
   }
 
   @Get('rank')
@@ -33,7 +36,7 @@ export class StatsController {
     description: 'Текущий ранг, уровень и прогресс до следующего уровня' 
   })
   getRank(@Req() req: Request) {
-    return this.statsService.getRank(req.userId!);
+    return this.statsService.getRank(req.user!.userId);
   }
 }
 

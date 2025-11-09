@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../../common/schemas/user.schema';
 import { UserStats, UserStatsDocument } from '../../common/schemas/user-stats.schema';
+import { JwtService } from '@nestjs/jwt';
 
 interface TelegramUser {
   id: number;
@@ -30,6 +31,7 @@ export class AuthService {
     private configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(UserStats.name) private userStatsModel: Model<UserStatsDocument>,
+    private jwtService: JwtService,
   ) {}
 
   /**
@@ -126,9 +128,9 @@ export class AuthService {
 
   /**
    * Авторизация пользователя через Telegram
-   * Создает нового пользователя или возвращает существующего
+   * Создает нового пользователя или возвращает существующего, а затем генерирует JWT
    */
-  async authenticateWithTelegram(initData: string) {
+  async authenticateWithTelegram(initData: string): Promise<{ accessToken: string }> {
     this.logger.log('=== [authenticateWithTelegram] START ===');
     
     // Валидируем initData
@@ -181,18 +183,26 @@ export class AuthService {
       this.logger.log(`[authenticateWithTelegram] ✅ User updated. Old: ${JSON.stringify(oldData)}, New: username=${user.username}, firstName=${user.firstName}`);
     }
 
-    const response = {
-      userId: user._id.toString(),
-      telegramId: user.telegramId!,
-      firstName: user.firstName,
-      lastName: user.lastName,
+    // Генерируем JWT токен
+    const accessToken = await this.login(user);
+    
+    this.logger.log(`[authenticateWithTelegram] === END === Returning JWT token`);
+
+    return accessToken;
+  }
+
+  /**
+   * Генерация JWT токена для пользователя
+   */
+  async login(user: UserDocument): Promise<{ accessToken: string }> {
+    const payload = { 
+      sub: user._id.toString(), 
+      telegramId: user.telegramId,
       username: user.username,
-      photoUrl: telegramUser.photo_url,
     };
-
-    this.logger.log(`[authenticateWithTelegram] === END === Returning: ${JSON.stringify(response)}`);
-
-    return response;
+    this.logger.log(`[login] Generating JWT for userId: ${payload.sub}`);
+    const accessToken = await this.jwtService.signAsync(payload);
+    return { accessToken };
   }
 
   /**

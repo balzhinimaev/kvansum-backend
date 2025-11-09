@@ -11,7 +11,6 @@ import { ArtefactsModule } from './modules/artefacts/artefacts.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PartyModule } from './modules/party/party.module';
 import { WebSocketsModule } from './common/websockets/websockets.module';
-import { UserMiddleware } from './common/middleware/user.middleware';
 import configuration from './config/configuration';
 
 const logger = new Logger('AppModule');
@@ -60,12 +59,4 @@ const logger = new Logger('AppModule');
     PartyModule,
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    // UserMiddleware нуждается в UsersService, который предоставляется UsersModule
-    consumer
-      .apply(UserMiddleware)
-      .exclude('health', 'api/auth/telegram')
-      .forRoutes('*');
-  }
-}
+export class AppModule {}

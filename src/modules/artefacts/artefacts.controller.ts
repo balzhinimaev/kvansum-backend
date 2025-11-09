@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ArtefactsService } from './artefacts.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('artefacts')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('api/artefacts')
 export class ArtefactsController {
   constructor(private readonly artefactsService: ArtefactsService) {}

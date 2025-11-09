@@ -12,22 +12,10 @@ export class TelegramAuthDto {
 }
 
 export class AuthResponseDto {
-  @ApiProperty({ description: 'ID пользователя в системе', example: '507f1f77bcf86cd799439011' })
-  userId: string;
-
-  @ApiProperty({ description: 'Telegram ID пользователя', example: 279058397 })
-  telegramId: number;
-
-  @ApiPropertyOptional({ description: 'Имя пользователя', example: 'Иван' })
-  firstName?: string;
-
-  @ApiPropertyOptional({ description: 'Фамилия пользователя', example: 'Иванов' })
-  lastName?: string;
-
-  @ApiPropertyOptional({ description: 'Username в Telegram', example: 'ivan_dev' })
-  username?: string;
-
-  @ApiPropertyOptional({ description: 'URL фото профиля', example: 'https://t.me/i/userpic/320/...' })
-  photoUrl?: string;
+  @ApiProperty({ 
+    description: 'JWT токен доступа', 
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJ1c2VybmFtZSI6Iml2YW5fZGV2IiwiaWF0IjoxNjE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c' 
+  })
+  accessToken: string;
 }
 

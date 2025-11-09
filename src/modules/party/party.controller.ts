@@ -9,15 +9,19 @@ import {
   Req,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { PartyService } from './party.service';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { Request } from 'express';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('party')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('api/party')
 export class PartyController {
   constructor(private readonly partyService: PartyService) {}
@@ -28,21 +32,21 @@ export class PartyController {
   @ApiResponse({ status: 400, description: 'У пользователя уже есть группа' })
   @ApiBody({ type: CreatePartyDto })
   async createParty(@Req() req: Request, @Body() createPartyDto: CreatePartyDto) {
-    return this.partyService.createParty(req.userId!, createPartyDto);
+    return this.partyService.createParty(req.user!.userId, createPartyDto);
   }
 
   @Get('my')
   @ApiOperation({ summary: 'Получить мою группу' })
   @ApiResponse({ status: 200, description: 'Данные группы или null' })
   async getMyParty(@Req() req: Request) {
-    return this.partyService.getMyParty(req.userId!);
+    return this.partyService.getMyParty(req.user!.userId);
   }
 
   @Get('available-users')
   @ApiOperation({ summary: 'Получить список пользователей для приглашения' })
   @ApiResponse({ status: 200, description: 'Список доступных пользователей' })
   async getAvailableUsers(@Req() req: Request) {
-    return this.partyService.getAvailableUsers(req.userId!);
+    return this.partyService.getAvailableUsers(req.user!.userId);
   }
 
   @Patch(':id')
@@ -57,7 +61,7 @@ export class PartyController {
     @Param('id') partyId: string,
     @Body() updatePartyDto: UpdatePartyDto,
   ) {
-    return this.partyService.updateParty(req.userId!, partyId, updatePartyDto);
+    return this.partyService.updateParty(req.user!.userId, partyId, updatePartyDto);
   }
 
   @Post(':id/invite')
@@ -73,7 +77,7 @@ export class PartyController {
     @Param('id') partyId: string,
     @Body() inviteUserDto: InviteUserDto,
   ) {
-    return this.partyService.inviteUser(req.userId!, partyId, inviteUserDto.userId);
+    return this.partyService.inviteUser(req.user!.userId, partyId, inviteUserDto.userId);
   }
 
   @Post(':id/accept')
@@ -84,7 +88,7 @@ export class PartyController {
   @ApiResponse({ status: 404, description: 'Группа не найдена' })
   @ApiParam({ name: 'id', description: 'ID группы' })
   async acceptInvite(@Req() req: Request, @Param('id') partyId: string) {
-    return this.partyService.acceptInvite(req.userId!, partyId);
+    return this.partyService.acceptInvite(req.user!.userId, partyId);
   }
 
   @Post(':id/leave')
@@ -95,7 +99,7 @@ export class PartyController {
   @ApiResponse({ status: 404, description: 'Группа не найдена' })
   @ApiParam({ name: 'id', description: 'ID группы' })
   async leaveParty(@Req() req: Request, @Param('id') partyId: string) {
-    return this.partyService.leaveParty(req.userId!, partyId);
+    return this.partyService.leaveParty(req.user!.userId, partyId);
   }
 
   @Delete(':id')
@@ -105,7 +109,7 @@ export class PartyController {
   @ApiResponse({ status: 404, description: 'Группа не найдена' })
   @ApiParam({ name: 'id', description: 'ID группы' })
   async deleteParty(@Req() req: Request, @Param('id') partyId: string) {
-    return this.partyService.deleteParty(req.userId!, partyId);
+    return this.partyService.deleteParty(req.user!.userId, partyId);
   }
 }
 

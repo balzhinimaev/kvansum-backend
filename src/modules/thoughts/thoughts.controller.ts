@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ThoughtsService } from './thoughts.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('thoughts')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('api/thoughts')
 export class ThoughtsController {
   constructor(private readonly thoughtsService: ThoughtsService) {}
