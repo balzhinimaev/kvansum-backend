@@ -27,6 +27,12 @@ async function bootstrap() {
     const nodeEnv = configService.get<string>('nodeEnv', 'development');
     logger.log(`Configuration loaded - Port: ${port}, Environment: ${nodeEnv}`);
 
+    // Глобальный префикс для всех роутов
+    app.setGlobalPrefix('api', {
+      exclude: ['/', 'health'], // исключаем корень и health check
+    });
+    logger.log('Global prefix "api" set for all routes');
+
     // Глобальная валидация
     app.useGlobalPipes(
       new ValidationPipe({
@@ -74,14 +80,14 @@ async function bootstrap() {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document, {
+    SwaggerModule.setup('docs', app, document, {
       swaggerOptions: {
         persistAuthorization: true,
         tagsSorter: 'alpha',
         operationsSorter: 'alpha',
       },
     });
-    logger.log('Swagger documentation configured');
+    logger.log('Swagger documentation configured at /api/docs');
 
     // Запускаем приложение
     logger.log(`Starting server on port ${port}...`);
