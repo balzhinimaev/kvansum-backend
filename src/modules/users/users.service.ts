@@ -126,8 +126,111 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      city: user.city,
+      bio: user.bio,
+      avatarLetter: user.avatarLetter,
       createdAt: (user as any).createdAt,
     };
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.findById(userId);
+    let stats = await this.userStatsModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+
+    if (!stats) {
+      stats = await this.userStatsModel.create({
+        userId: new Types.ObjectId(userId),
+      });
+    }
+
+    // Формируем полное имя
+    const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || 'Пользователь';
+
+    // Генерируем avatarLetter если его нет
+    let avatarLetter = user.avatarLetter;
+    if (!avatarLetter && user.firstName) {
+      avatarLetter = user.firstName.charAt(0).toUpperCase();
+    } else if (!avatarLetter && user.username) {
+      avatarLetter = user.username.charAt(0).toUpperCase();
+    } else if (!avatarLetter) {
+      avatarLetter = 'У';
+    }
+
+    return {
+      name,
+      username: user.username || 'user',
+      telegramId: user.telegramId?.toString() || '',
+      totalPoints: stats.totalPoints || 0,
+      avatarLetter,
+      rankKey: stats.currentRank || 'beginner',
+      city: user.city || '',
+      bio: user.bio || '',
+    };
+  }
+
+  async getLeaderboard(currentUserId?: string, limit: number = 100) {
+    // Получаем всех пользователей с их статистикой
+    const usersWithStats = await this.userStatsModel
+      .find()
+      .sort({ totalPoints: -1 })
+      .limit(limit)
+      .populate('userId')
+      .lean();
+
+    // Маппинг рангов с эмодзи роста
+    const rankGrowth: Record<string, string> = {
+      beginner: '🌱',
+      observer: '🔎',
+      active: '⚡',
+      systemic: '🔄',
+      architect: '🏗️',
+      scaling: '🚀',
+    };
+
+    // Массивы для случайных эмодзи
+    const streakEmojis = ['🔥', '⚡', '💫', '✨'];
+    const energyEmojis = ['💪', '🎯', '⭐', '🌟'];
+
+    const participants = usersWithStats.map((stat, index) => {
+      const user = stat.userId as any;
+      const firstName = user?.firstName || '';
+      const lastName = user?.lastName || '';
+      const username = user?.username || 'user';
+      const name = [firstName, lastName].filter(Boolean).join(' ') || username;
+
+      // Определяем ранг
+      const rank = stat.currentRank || 'beginner';
+      const rankTitles: Record<string, string> = {
+        beginner: 'Начинающий',
+        observer: 'Наблюдатель',
+        active: 'Активный',
+        systemic: 'Системный',
+        architect: 'Архитектор',
+        scaling: 'Масштабирующий',
+      };
+
+      // Вычисляем трофеи на основе очков
+      const trophies = Math.max(3, Math.round(stat.totalPoints / 40));
+
+      return {
+        id: user?._id?.toString() || '',
+        name,
+        rank: rankTitles[rank] || 'Начинающий',
+        rankIcon: rankGrowth[rank] || '🌱',
+        points: stat.totalPoints || 0,
+        trophies,
+        streakEmoji: streakEmojis[index % streakEmojis.length],
+        energyEmoji: energyEmojis[index % energyEmojis.length],
+        growthEmoji: rankGrowth[rank] || '🌱',
+        isYou: currentUserId ? user?._id?.toString() === currentUserId : false,
+        position: index + 1,
+        profilePath: `/profile/${user?._id}`,
+      };
+    });
+
+    return participants;
   }
 
   async exportData(userId: string) {

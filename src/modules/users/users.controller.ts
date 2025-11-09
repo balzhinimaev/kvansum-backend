@@ -28,6 +28,26 @@ export class UsersController {
     return this.usersService.getMe(req.userId!);
   }
 
+  @Get('profile')
+  @ApiOperation({ summary: 'Получить полный профиль пользователя (для фронтенда)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Полный профиль: имя, username, telegramId, очки, город, био, ранг' 
+  })
+  async getProfile(@Req() req: Request) {
+    return this.usersService.getProfile(req.userId!);
+  }
+
+  @Get('leaderboard')
+  @ApiOperation({ summary: 'Получить рейтинг участников' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Список участников с рангами, очками и позициями' 
+  })
+  async getLeaderboard(@Req() req: Request) {
+    return this.usersService.getLeaderboard(req.userId);
+  }
+
   @Patch('me')
   @ApiOperation({ summary: 'Обновить профиль пользователя' })
   @ApiResponse({ status: 200, description: 'Профиль успешно обновлен' })

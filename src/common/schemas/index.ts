@@ -6,4 +6,5 @@ export * from './thought.schema';
 export * from './artefact.schema';
 export * from './level.schema';
 export * from './user-progress.schema';
+export * from './party.schema';
 

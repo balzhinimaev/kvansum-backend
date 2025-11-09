@@ -9,6 +9,7 @@ import { StatsModule } from './modules/stats/stats.module';
 import { ThoughtsModule } from './modules/thoughts/thoughts.module';
 import { ArtefactsModule } from './modules/artefacts/artefacts.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PartyModule } from './modules/party/party.module';
 import { WebSocketsModule } from './common/websockets/websockets.module';
 import { UserMiddleware } from './common/middleware/user.middleware';
 import configuration from './config/configuration';
@@ -56,6 +57,7 @@ const logger = new Logger('AppModule');
     StatsModule,
     ThoughtsModule,
     ArtefactsModule,
+    PartyModule,
   ],
 })
 export class AppModule implements NestModule {

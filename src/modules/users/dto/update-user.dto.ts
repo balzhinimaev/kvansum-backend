@@ -21,5 +21,20 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   username?: string;
+
+  @ApiPropertyOptional({ description: 'Город пользователя', example: 'Санкт-Петербург' })
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @ApiPropertyOptional({ description: 'Биография пользователя', example: 'Создаю новые привычки' })
+  @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @ApiPropertyOptional({ description: 'Буква аватара', example: 'А' })
+  @IsOptional()
+  @IsString()
+  avatarLetter?: string;
 }
 

@@ -19,6 +19,15 @@ export class User {
 
   @Prop({ type: String, unique: true, sparse: true })
   email?: string;
+
+  @Prop({ type: String })
+  city?: string;
+
+  @Prop({ type: String })
+  bio?: string;
+
+  @Prop({ type: String })
+  avatarLetter?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
