@@ -203,6 +203,7 @@ export class AuthService {
       sub: user._id.toString(), 
       telegramId: user.telegramId,
       username: user.username,
+      role: user.role,
     };
     this.logger.log(`[login] Generating JWT for userId: ${payload.sub}`);
     const accessToken = await this.jwtService.signAsync(payload);

@@ -2,6 +2,9 @@ import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ArtefactsService } from './artefacts.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../../common/schemas';
 
 @ApiTags('artefacts')
 @ApiBearerAuth()
@@ -45,6 +48,8 @@ export class ArtefactsController {
       },
     },
   })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   create(
     @Body()
     body: {
@@ -54,7 +59,6 @@ export class ArtefactsController {
       unlock: any;
     },
   ) {
-    // В продакшене здесь должна быть проверка на admin роль
     return this.artefactsService.create(body);
   }
 }

@@ -2,6 +2,9 @@ import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ThoughtsService } from './thoughts.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../../common/schemas';
 
 @ApiTags('thoughts')
 @ApiBearerAuth()
@@ -23,8 +26,9 @@ export class ThoughtsController {
   @Get()
   @ApiOperation({ summary: 'Получить все мысли (admin)' })
   @ApiResponse({ status: 200, description: 'Полный список мыслей' })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   findAll() {
-    // В продакшене здесь должна быть проверка на admin роль
     return this.thoughtsService.findAll();
   }
 
@@ -42,8 +46,9 @@ export class ThoughtsController {
       },
     },
   })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   create(@Body() body: { quote: string; author?: string }) {
-    // В продакшене здесь должна быть проверка на admin роль
     return this.thoughtsService.create(body.quote, body.author);
   }
 }
