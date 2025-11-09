@@ -6,6 +6,7 @@ export default () => ({
     dbName: process.env.DB_NAME || 'kvansum',
   },
   cors: {
+    enabled: process.env.CORS_ENABLED !== 'false', // по умолчанию включен, отключается через CORS_ENABLED=false
     origins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   },

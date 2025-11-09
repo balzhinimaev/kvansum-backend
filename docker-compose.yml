@@ -33,6 +33,8 @@ services:
       MONGODB_URI: ${MONGODB_URI}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       CORS_ORIGINS: ${CORS_ORIGINS}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
     # depends_on убран - используется внешний MongoDB
     volumes:
       - ./src:/app/src

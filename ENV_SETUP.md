@@ -13,6 +13,7 @@ PORT=3001
 MONGODB_URI=mongodb://kvansum:kvansum_dev_password@localhost:27017/kvansum?authSource=admin
 
 # CORS
+CORS_ENABLED=true
 CORS_ORIGINS=http://localhost:3000,http://localhost:3001
 
 # JWT (для будущей реализации)
@@ -37,6 +38,9 @@ TELEGRAM_BOT_TOKEN=your-bot-token-here
   - Docker Compose (внутри контейнера): `mongodb://kvansum:kvansum_dev_password@mongodb:27017/kvansum?authSource=admin`
 
 ### CORS
+- `CORS_ENABLED` - Включить/выключить CORS (true/false, по умолчанию true)
+  - Для отключения CORS используйте `CORS_ENABLED=false`
+  - Полезно для тестирования или когда приложение работает в одном домене
 - `CORS_ORIGINS` - Список разрешенных origin для CORS (через запятую)
 
 ### JWT (опционально)
@@ -54,18 +58,21 @@ TELEGRAM_BOT_TOKEN=your-bot-token-here
 ```env
 NODE_ENV=development
 MONGODB_URI=mongodb://kvansum:kvansum_dev_password@localhost:27017/kvansum?authSource=admin
+CORS_ENABLED=true
 ```
 
 ### Docker Compose
 ```env
 NODE_ENV=development
 MONGODB_URI=mongodb://kvansum:kvansum_dev_password@mongodb:27017/kvansum?authSource=admin
+CORS_ENABLED=true
 ```
 
 ### Production
 ```env
 NODE_ENV=production
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
+CORS_ENABLED=true
 CORS_ORIGINS=https://your-production-domain.com
 JWT_SECRET=your-secure-random-secret-key
 ```
