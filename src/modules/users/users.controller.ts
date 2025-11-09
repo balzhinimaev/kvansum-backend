@@ -1,32 +1,10 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Body,
-  Req,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-
-// Расширяем интерфейс Request для добавления user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        userId: string;
-        telegramId: number;
-        username: string;
-      };
-    }
-  }
-}
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../../common/types/authenticated-user';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -41,8 +19,8 @@ export class UsersController {
     status: 200, 
     description: 'Профиль пользователя с общей статистикой' 
   })
-  async getMe(@Req() req: Request) {
-    return this.usersService.getMe(req.user!.userId);
+  async getMe(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.getMe(user.userId);
   }
 
   @Get('profile')
@@ -51,8 +29,8 @@ export class UsersController {
     status: 200, 
     description: 'Полный профиль: имя, username, telegramId, очки, город, био, ранг' 
   })
-  async getProfile(@Req() req: Request) {
-    return this.usersService.getProfile(req.user!.userId);
+  async getProfile(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.getProfile(user.userId);
   }
 
   @Get('leaderboard')
@@ -61,8 +39,8 @@ export class UsersController {
     status: 200, 
     description: 'Список участников с рангами, очками, позициями и флагом "isMe"' 
   })
-  async getLeaderboard(@Req() req: Request) {
-    return this.usersService.getLeaderboard(req.user?.userId);
+  async getLeaderboard(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.getLeaderboard(user.userId);
   }
 
   @Patch('me')
@@ -70,8 +48,11 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Профиль успешно обновлен' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
   @ApiBody({ type: UpdateUserDto })
-  async updateProfile(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateProfile(req.user!.userId, updateUserDto);
+  async updateProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.updateProfile(user.userId, updateUserDto);
   }
 
   @Post('export')
@@ -81,8 +62,8 @@ export class UsersController {
     status: 200, 
     description: 'Полный экспорт данных: профиль, привычки, логи, прогресс' 
   })
-  async exportData(@Req() req: Request) {
-    return this.usersService.exportData(req.user!.userId);
+  async exportData(@CurrentUser() user: AuthenticatedUser) {
+    return this.usersService.exportData(user.userId);
   }
 }
 

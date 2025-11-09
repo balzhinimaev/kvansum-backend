@@ -130,7 +130,7 @@ export class AuthService {
    * Авторизация пользователя через Telegram
    * Создает нового пользователя или возвращает существующего, а затем генерирует JWT
    */
-  async authenticateWithTelegram(initData: string): Promise<{ accessToken: string }> {
+  async authenticateWithTelegram(initData: string): Promise<{ accessToken: string; userId: string; telegramId: number }> {
     this.logger.log('=== [authenticateWithTelegram] START ===');
     
     // Валидируем initData
@@ -184,11 +184,15 @@ export class AuthService {
     }
 
     // Генерируем JWT токен
-    const accessToken = await this.login(user);
+    const { accessToken } = await this.login(user);
     
     this.logger.log(`[authenticateWithTelegram] === END === Returning JWT token`);
 
-    return accessToken;
+    return { 
+      accessToken, 
+      userId: user._id.toString(), 
+      telegramId: user.telegramId 
+    };
   }
 
   /**

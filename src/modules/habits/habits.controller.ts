@@ -1,24 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-  Req,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { CreateHabitLogDto, GetHabitLogsQueryDto } from './dto/habit-log.dto';
-import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../../common/types/authenticated-user';
 
 @ApiTags('habits')
 @ApiBearerAuth()
@@ -30,8 +18,8 @@ export class HabitsController {
   @Get()
   @ApiOperation({ summary: 'Получить все активные привычки пользователя' })
   @ApiResponse({ status: 200, description: 'Список привычек успешно получен' })
-  findAll(@Req() req: Request) {
-    return this.habitsService.findAll(req.user!.userId);
+  findAll(@CurrentUser() user: AuthenticatedUser) {
+    return this.habitsService.findAll(user.userId);
   }
 
   @Post()
@@ -40,8 +28,8 @@ export class HabitsController {
   @ApiResponse({ status: 201, description: 'Привычка успешно создана' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
   @ApiBody({ type: CreateHabitDto })
-  create(@Body() createHabitDto: CreateHabitDto, @Req() req: Request) {
-    return this.habitsService.create(createHabitDto, req.user!.userId);
+  create(@Body() createHabitDto: CreateHabitDto, @CurrentUser() user: AuthenticatedUser) {
+    return this.habitsService.create(createHabitDto, user.userId);
   }
 
   @Patch(':id')
@@ -53,9 +41,9 @@ export class HabitsController {
   update(
     @Param('id') id: string,
     @Body() updateHabitDto: UpdateHabitDto,
-    @Req() req: Request,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.habitsService.update(id, updateHabitDto, req.user!.userId);
+    return this.habitsService.update(id, updateHabitDto, user.userId);
   }
 
   @Delete(':id')
@@ -63,8 +51,8 @@ export class HabitsController {
   @ApiParam({ name: 'id', description: 'ID привычки' })
   @ApiResponse({ status: 200, description: 'Привычка успешно удалена' })
   @ApiResponse({ status: 404, description: 'Привычка не найдена' })
-  remove(@Param('id') id: string, @Req() req: Request) {
-    return this.habitsService.remove(id, req.user!.userId);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.habitsService.remove(id, user.userId);
   }
 
   @Post(':id/log')
@@ -76,9 +64,9 @@ export class HabitsController {
   createLog(
     @Param('id') id: string,
     @Body() createLogDto: CreateHabitLogDto,
-    @Req() req: Request,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.habitsService.createLog(id, createLogDto, req.user!.userId);
+    return this.habitsService.createLog(id, createLogDto, user.userId);
   }
 
   @Get(':id/logs')
@@ -92,9 +80,9 @@ export class HabitsController {
   getLogs(
     @Param('id') id: string,
     @Query() query: GetHabitLogsQueryDto,
-    @Req() req: Request,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.habitsService.getLogs(id, req.user!.userId, query);
+    return this.habitsService.getLogs(id, user.userId, query);
   }
 }
 

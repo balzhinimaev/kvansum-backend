@@ -1,10 +1,11 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UserProgress, UserProgressDocument } from '../../common/schemas/user-progress.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../../common/types/authenticated-user';
 
 @ApiTags('progress')
 @ApiBearerAuth()
@@ -22,8 +23,8 @@ export class ProgressController {
     status: 200, 
     description: 'Прогресс пользователя: выполнение по датам, серии привычек, разблокированные уровни' 
   })
-  async getProgress(@Req() req: Request) {
-    const userId = req.user!.userId;
+  async getProgress(@CurrentUser() user: AuthenticatedUser) {
+    const userId = user.userId;
 
     let progress = await this.userProgressModel.findOne({
       userId: new Types.ObjectId(userId),

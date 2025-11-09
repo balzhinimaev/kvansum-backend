@@ -2,6 +2,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { AuthenticatedUser } from '../../../common/types/authenticated-user';
+
+type JwtPayload = {
+  sub: string;
+  telegramId?: number;
+  username?: string;
+};
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +20,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
+    if (!payload?.sub) {
+      throw new UnauthorizedException('JWT payload does not contain subject');
+    }
+
     // Passport will build a user object based on the return value of our validate() method,
     // and attach it as a property on the Request object.
     return { 
