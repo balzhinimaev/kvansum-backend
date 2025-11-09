@@ -117,10 +117,10 @@ export class AuthService {
     this.logger.log(`[validateInitData] Validation successful for user: ${user.id} (${user.username || 'no username'})`);
 
     return {
+      ...data,
       user,
       auth_date: authDate,
       hash,
-      ...data,
     };
   }
 
@@ -133,6 +133,9 @@ export class AuthService {
     
     // Валидируем initData
     const validatedData = this.validateInitData(initData);
+    this.logger.debug(`[authenticateWithTelegram] validatedData keys: ${Object.keys(validatedData).join(', ')}`);
+    this.logger.debug(`[authenticateWithTelegram] validatedData.user type: ${typeof validatedData.user}`);
+    
     const telegramUser = validatedData.user;
 
     this.logger.log(`[authenticateWithTelegram] Telegram user data: ID=${telegramUser.id}, username=${telegramUser.username}, firstName=${telegramUser.first_name}`);
